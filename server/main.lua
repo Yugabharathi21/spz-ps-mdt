@@ -1414,40 +1414,39 @@ else
                         notes = "Self Registered",
                         weapClass = "Class 1",
                     }
-                    table.insert(weaponInfos, weaponInfo)
-                end
+                    table.insert(weaponInfos, weaponInfo)                end
             end
         end
         cb(weaponInfos)
     end)
 end
-						serialnumber = item.info.serie,
-						owner = Player.PlayerData.charinfo.firstname .. " " .. Player.PlayerData.charinfo.lastname,
-						weaponmodel = QBCore.Shared.Items[item.name].label,
-						weaponurl = invImage,
-						notes = "Self Registered",
-						weapClass = "Class 1",
-					}
-					table.insert(weaponInfos, weaponInfo)
-				end
-			end
-		end
-	end
-    cb(weaponInfos)
-end)
 
 RegisterNetEvent('mdt:server:registerweapon', function(serial, imageurl, notes, owner, weapClass, weapModel)
     exports['ps-mdt']:CreateWeaponInfo(serial, imageurl, notes, owner, weapClass, weapModel)
 end)
 
 local function giveCitationItem(src, citizenId, fine, incidentId)
-	local Player = QBCore.Functions.GetPlayerByCitizenId(citizenId)
-	local PlayerName = Player.PlayerData.charinfo.firstname .. ' ' .. Player.PlayerData.charinfo.lastname
-	local Officer = QBCore.Functions.GetPlayer(src)
-	local OfficerFullName = '(' .. Officer.PlayerData.metadata.callsign .. ') ' .. Officer.PlayerData.charinfo.firstname .. ' ' .. Officer.PlayerData.charinfo.lastname
-	local info = {}
-	local date = os.date("%Y-%m-%d %H:%M")
-	if Config.InventoryForWeaponsImages == "ox_inventory" then
+    local PlayerName, OfficerFullName
+    local info = {}
+    local date = os.date("%Y-%m-%d %H:%M")
+
+    if Config.Framework == "qb" then
+        local Player = QBCore.Functions.GetPlayerByCitizenId(citizenId)
+        local Officer = QBCore.Functions.GetPlayer(src)
+        if Player and Officer then
+            PlayerName = Player.PlayerData.charinfo.firstname .. ' ' .. Player.PlayerData.charinfo.lastname
+            OfficerFullName = '(' .. Officer.PlayerData.metadata.callsign .. ') ' .. Officer.PlayerData.charinfo.firstname .. ' ' .. Officer.PlayerData.charinfo.lastname
+        end
+    elseif Config.Framework == "esx" then
+        local xPlayer = ESX.GetPlayerFromIdentifier(citizenId)
+        local xOfficer = ESX.GetPlayerFromId(src)
+        if xPlayer and xOfficer then
+            PlayerName = xPlayer.get('firstName') .. ' ' .. xPlayer.get('lastName')
+            OfficerFullName = '(' .. (xOfficer.get('callsign') or 'NO CALLSIGN') .. ') ' .. xOfficer.get('firstName') .. ' ' .. xOfficer.get('lastName')
+        end
+    end
+
+    if Config.InventoryForWeaponsImages == "ox_inventory" then
 		info = {
 			description = {
 				'Citizen ID: ' .. citizenId '  \n',
