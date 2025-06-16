@@ -1,14 +1,21 @@
 local QBCore = exports['qb-core']:GetCoreObject()
+local Framework = Config.GetFramework()
 
 -- Get CitizenIDs from Player License
 function GetCitizenID(license)
-    local result = MySQL.query.await("SELECT citizenid FROM players WHERE license = ?", {license,})
-    if result ~= nil then
-        return result
-    else
-        print("Cannot find a CitizenID for License: "..license)
-        return nil
+    if Config.Framework == "qb" then
+        local result = MySQL.query.await("SELECT citizenid FROM players WHERE license = ?", {license})
+        if result ~= nil then
+            return result
+        end
+    elseif Config.Framework == "esx" then
+        local result = MySQL.query.await("SELECT identifier FROM users WHERE license = ?", {license})
+        if result ~= nil then
+            return result
+        end
     end
+    print("Cannot find an identifier for License: "..license)
+    return nil
 end
 
 -- (Start) Opening the MDT and sending data
@@ -17,15 +24,19 @@ function AddLog(text)
 end
 
 function GetNameFromId(cid)
-	local result = MySQL.scalar.await('SELECT charinfo FROM players WHERE citizenid = @citizenid', { ['@citizenid'] = cid })
-    if result ~= nil then
-        local charinfo = json.decode(result)
-        local fullname = charinfo['firstname']..' '..charinfo['lastname']
-        return fullname
-    else
-        --print('Player does not exist')
-        return nil
+    if Config.Framework == "qb" then
+        local result = MySQL.scalar.await('SELECT charinfo FROM players WHERE citizenid = @citizenid', { ['@citizenid'] = cid })
+        if result then
+            local charinfo = json.decode(result)
+            return charinfo.firstname .. ' ' .. charinfo.lastname
+        end
+    elseif Config.Framework == "esx" then
+        local result = MySQL.scalar.await('SELECT firstname, lastname FROM users WHERE identifier = @identifier', { ['@identifier'] = cid })
+        if result then
+            return result.firstname .. ' ' .. result.lastname
+        end
     end
+    return nil
 end
 
 function GetPersonInformation(cid, jobtype)

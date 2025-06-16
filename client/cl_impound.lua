@@ -48,27 +48,26 @@ local function TakeOutImpound(vehicle)
     local coords = Config.ImpoundLocations[currentGarage]
     if coords then
         if Config.Framework == "qb" then
-            QBCore.Functions.SpawnVehicle(vehicle.vehicle, function(veh)
-                QBCore.Functions.TriggerCallback('qb-garage:server:GetVehicleProperties', function(properties)
-                    QBCore.Functions.SetVehicleProperties(veh, properties)
+            Framework.Functions.SpawnVehicle(vehicle.vehicle, function(veh)
+                Framework.Functions.TriggerCallback('qb-garage:server:GetVehicleProperties', function(properties)
+                    Framework.Functions.SetVehicleProperties(veh, properties)
                     SetVehicleNumberPlateText(veh, vehicle.plate)
                     SetEntityHeading(veh, coords.w)
                     exports[Config.Fuel]:SetFuel(veh, vehicle.fuel)
                     doCarDamage(veh, vehicle)
-                    TriggerServerEvent('police:server:TakeOutImpound',vehicle.plate)
-                    TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
+                    TriggerServerEvent('police:server:TakeOutImpound', vehicle.plate)
+                    TriggerEvent("vehiclekeys:client:SetOwner", Framework.Functions.GetPlate(veh))
                     SetVehicleEngineOn(veh, true, true)
                 end, vehicle.plate)
             end, coords, true)
-        else -- ESX
-            ESX.Game.SpawnVehicle(vehicle.vehicle, coords, coords.w, function(veh)
-                ESX.TriggerServerCallback('esx_garage:getVehicleProperties', function(properties)
-                    ESX.Game.SetVehicleProperties(veh, properties)
+        elseif Config.Framework == "esx" then
+            Framework.Game.SpawnVehicle(vehicle.vehicle, coords, coords.w, function(veh)
+                Framework.TriggerServerCallback('esx_garage:getVehicleProperties', function(properties)
+                    Framework.Game.SetVehicleProperties(veh, properties)
                     SetVehicleNumberPlateText(veh, vehicle.plate)
                     exports[Config.Fuel]:SetFuel(veh, vehicle.fuel)
                     doCarDamage(veh, vehicle)
-                    TriggerServerEvent('police:server:TakeOutImpound',vehicle.plate)
-                    TriggerEvent("vehiclekeys:client:SetOwner", ESX.Math.Trim(GetVehicleNumberPlateText(veh)))
+                    TriggerServerEvent('police:server:TakeOutImpound', vehicle.plate)
                     SetVehicleEngineOn(veh, true, true)
                 end, vehicle.plate)
             end)
@@ -86,9 +85,9 @@ RegisterNetEvent('ps-mdt:client:TakeOutImpound', function(data)
         TakeOutImpound(data)
     else
         if Config.Framework == "qb" then
-            QBCore.Functions.Notify("You are too far away from the impound location!")
+            Framework.Functions.Notify("You are too far away from the impound location!")
         else
-            ESX.ShowNotification("You are too far away from the impound location!")
+            Framework.ShowNotification("You are too far away from the impound location!")
         end
     end
 end)

@@ -10,15 +10,10 @@ local tabletProp = `prop_cs_tablet`
 local tabletBone = 60309
 local tabletOffset = vector3(0.03, 0.002, -0.0)
 local tabletRot = vector3(10.0, 160.0, 0.0)
-local coolDown = false
-local lastVeh = nil
-local lastPlate = nil
 
 if Config.Framework == "qb" then
-    QBCore = Framework
-    
     RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
-        PlayerData = QBCore.Functions.GetPlayerData()
+        PlayerData = Framework.Functions.GetPlayerData()
         callSign = PlayerData.metadata.callsign
     end)
 
@@ -29,9 +24,11 @@ if Config.Framework == "qb" then
     RegisterNetEvent('QBCore:Client:OnJobUpdate', function(JobInfo)
         PlayerData.job = JobInfo
     end)
-else -- ESX
-    ESX = Framework
 
+    RegisterNetEvent('QBCore:Client:OnGangUpdate', function(GangInfo)
+        PlayerData.gang = GangInfo
+    end)
+else
     RegisterNetEvent('esx:playerLoaded')
     AddEventHandler('esx:playerLoaded', function(xPlayer)
         PlayerData = xPlayer

@@ -1,21 +1,48 @@
-local QBCore = exports['qb-core']:GetCoreObject()
+local Framework = Config.GetFramework()
 
 function GetPlayerData(source)
-	local Player = QBCore.Functions.GetPlayer(source)
-	if Player == nil then return end -- Player not loaded in correctly
-	return Player.PlayerData
+    if Config.Framework == "qb" then
+        local Player = Framework.Functions.GetPlayer(source)
+        if Player == nil then return end
+        return Player.PlayerData
+    elseif Config.Framework == "esx" then
+        local xPlayer = Framework.GetPlayerFromId(source)
+        if xPlayer == nil then return end
+        return {
+            citizenid = xPlayer.identifier,
+            charinfo = {
+                firstname = xPlayer.get('firstName') or "",
+                lastname = xPlayer.get('lastName') or "",
+                birthdate = xPlayer.get('dateofbirth') or "",
+            },
+            job = xPlayer.getJob(),
+            metadata = {
+                callsign = xPlayer.get('callsign') or "NO CALLSIGN"
+            }
+        }
+    end
 end
 
 function UnpackJob(data)
-	local job = {
-		name = data.name,
-		label = data.label
-	}
-	local grade = {
-		name = data.grade.name,
-	}
-
-	return job, grade
+    if Config.Framework == "qb" then
+        local job = {
+            name = data.name,
+            label = data.label
+        }
+        local grade = {
+            name = data.grade.name,
+        }
+        return job, grade
+    elseif Config.Framework == "esx" then
+        local job = {
+            name = data.name,
+            label = data.label
+        }
+        local grade = {
+            name = data.grade_name,
+        }
+        return job, grade
+    end
 end
 
 function PermCheck(src, PlayerData)
