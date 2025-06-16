@@ -1,4 +1,4 @@
-QBCore = exports['qb-core']:GetCoreObject()
+local Framework = Config.GetFramework()
 local PlayerData = {}
 local CurrentCops = 0
 local isOpen = false
@@ -13,6 +13,55 @@ local tabletRot = vector3(10.0, 160.0, 0.0)
 local coolDown = false
 local lastVeh = nil
 local lastPlate = nil
+
+if Config.Framework == "qb" then
+    QBCore = Framework
+    
+    RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
+        PlayerData = QBCore.Functions.GetPlayerData()
+        callSign = PlayerData.metadata.callsign
+    end)
+
+    RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
+        PlayerData = {}
+    end)
+
+    RegisterNetEvent('QBCore:Client:OnJobUpdate', function(JobInfo)
+        PlayerData.job = JobInfo
+    end)
+else -- ESX
+    ESX = Framework
+
+    RegisterNetEvent('esx:playerLoaded')
+    AddEventHandler('esx:playerLoaded', function(xPlayer)
+        PlayerData = xPlayer
+        if PlayerData.job.name == 'police' then
+            callSign = PlayerData.job.grade_label
+        end
+    end)
+
+    RegisterNetEvent('esx:setJob')
+    AddEventHandler('esx:setJob', function(job)
+        PlayerData.job = job
+    end)
+end
+
+-- Shared functions that work with both frameworks
+local function IsPolice()
+    if Config.Framework == "qb" then
+        return PlayerData.job and (PlayerData.job.name == 'police' or PlayerData.job.type == 'leo')
+    else
+        return PlayerData.job and PlayerData.job.name == 'police'
+    end
+end
+
+local function GetPlayerIdentifier()
+    if Config.Framework == "qb" then
+        return PlayerData.citizenid
+    else
+        return PlayerData.identifier
+    end
+end
 
 CreateThread(function()
     if GetResourceState('ps-dispatch') == 'started' then

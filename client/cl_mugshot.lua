@@ -1,19 +1,47 @@
-QBCore = exports['qb-core']:GetCoreObject()
+local Framework = Config.GetFramework()
 local PlayerData = {}
 local mugshotInProgress, createdCamera, MugshotArray, playerData = false, 0, {}, nil
 local handle, board, board_scaleform, overlay, ped, pedcoords, x, y, z, r, suspectheading, suspectx, suspecty, suspectz, board_pos
 local MugShots = {}
 
--- Mugshot location  ( Position is the default QBCore Prison Interior )
-	x = 1828.69
-    y = 2581.72
-    z = 46.3
-    r = {x = 0.0, y = 0.0, z = 92.23}
-    suspectheading = 265.00
-    suspectx = 1827.63
-    suspecty = 2581.7
-    suspectz = 44.89
-	
+-- Mugshot location  ( Position is the default Prison Interior )
+x = 1828.69
+y = 2581.72
+z = 46.3
+r = {x = 0.0, y = 0.0, z = 92.23}
+suspectheading = 265.00
+suspectx = 1827.63
+suspecty = 2581.7
+suspectz = 44.89
+
+-- Initialize framework-specific player data
+if Config.Framework == "qb" then
+    QBCore = Framework
+    PlayerData = QBCore.Functions.GetPlayerData()
+else
+    ESX = Framework
+    ESX.PlayerData = ESX.GetPlayerData()
+    PlayerData = ESX.PlayerData
+end
+
+local function GetPlayerInfo()
+    if Config.Framework == "qb" then
+        return {
+            citizenid = PlayerData.citizenid,
+            charinfo = PlayerData.charinfo
+        }
+    else
+        return {
+            citizenid = PlayerData.identifier,
+            charinfo = {
+                firstname = PlayerData.firstName or "Unknown",
+                lastname = PlayerData.lastName or "Unknown",
+                birthdate = PlayerData.dateofbirth or "Unknown"
+            }
+        }
+    end
+end
+
 -- Mugshot functions
 
 local function TakeMugShot()
@@ -142,6 +170,7 @@ local function PrepBoard()
 end
 
 local function MakeBoard()
+    playerData = GetPlayerInfo()
     title = "Bolingbroke Penitentiary"
     center = playerData.charinfo.firstname.. " ".. playerData.charinfo.lastname
     footer = playerData.citizenid

@@ -2,18 +2,48 @@
 
 For all support questions, ask in our [Discord](https://www.discord.gg/projectsloth) support chat. Do not create issues if you need help. Issues are for bug reporting and new features only.
 
-## Dependencies
+## Framework Support
 
+This MDT now supports both QBCore and ESX frameworks. You can switch between them in the config:
+
+```lua
+-- In shared/config.lua
+Config.Framework = "qb"  -- Use "qb" for QBCore or "esx" for ESX
+```
+
+### Dependencies
+
+#### QBCore Dependencies
 - [QBCore](https://github.com/qbcore-framework/qb-core)
 - [ps-dispatch](https://github.com/Project-Sloth/ps-dispatch)
 - [oxmysql](https://github.com/overextended/oxmysql)
 - [qb-apartments](https://github.com/qbcore-framework/qb-apartments) | [Config](https://github.com/Project-Sloth/ps-mdt/blob/0ce2ab88d2ca7b0a49abfb3f7f8939d0769c7b73/shared/config.lua#L3) available to enable or disable. 
 - [qb-communityservice](https://github.com/Zepherlah/qb-community-service) - If you're planning on sending to community service. 
 
+#### ESX Dependencies
+- [es_extended](https://github.com/esx-framework/esx-legacy)
+- [oxmysql](https://github.com/overextended/oxmysql)
+- [esx_garage](https://github.com/esx-framework/esx-legacy) - For vehicle handling
+- [esx_policejob](https://github.com/esx-framework/esx-legacy) - For police functionality
+
 # Installation
 * Download ZIP
-* Drag and drop resource into your server files, make sure to remove -main in the folder name
-* Open the sql folder and run the SQL script which corresponds to your framework
+* Drag and drop resource into your server files
+* Open the sql folder and run the SQL script which corresponds to your framework (qbcore.sql or esx.sql)
+* Configure your framework choice in shared/config.lua
+* Ensure your framework dependencies are installed and up to date
+
+## Framework-Specific Setup
+
+### QBCore Setup
+Follow the standard QBCore installation steps above.
+
+### ESX Setup
+1. Ensure you have the latest version of es_extended installed
+2. Run the esx.sql file from the sql folder
+3. Set `Config.Framework = "esx"` in shared/config.lua
+4. Make sure esx_garage and esx_policejob are properly configured
+5. ESX police jobs must have the proper job name ('police') configured in your jobs table
 
 # Weapon Info Export
 
@@ -302,4 +332,4 @@ The below repos are direct forks of ps-mdt and have been edited to fit certain c
 * [LeSiiN](https://github.com/LeSiiN)
 * [ImXirvin](https://github.com/ImXirvin)
 * [lenzh](https://github.com/lenzh)
-* Everyone else that we may have missed, thank you! 
+* Everyone else that we may have missed, thank you!

@@ -1,5 +1,17 @@
 Config = Config or {}
 
+-- Framework Configuration
+Config.Framework = "qb" -- Options: "qb" or "esx"
+
+-- Framework Functions
+function Config.GetFramework()
+    if Config.Framework == "qb" then
+        return exports['qb-core']:GetCoreObject()
+    elseif Config.Framework == "esx" then
+        return exports['es_extended']:getSharedObject()
+    end
+end
+
 Config.OnlyShowOnDuty = true
 
 -- RECOMMENDED Fivemerr Images. DOES NOT EXPIRE. 
