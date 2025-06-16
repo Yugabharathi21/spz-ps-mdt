@@ -1,4 +1,10 @@
-local Framework = Config.GetFramework()
+local Framework = nil
+
+if Config.Framework == "qb" then
+    Framework = exports['qb-core']:GetCoreObject()
+elseif Config.Framework == "esx" then
+    Framework = exports['es_extended']:getSharedObject()
+end
 
 function GetPlayerData(source)
     if Config.Framework == "qb" then

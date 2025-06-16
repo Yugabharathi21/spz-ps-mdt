@@ -1,4 +1,11 @@
-local Framework = Config.GetFramework()
+local Framework = nil
+
+if Config.Framework == "qb" then
+    Framework = exports['qb-core']:GetCoreObject()
+elseif Config.Framework == "esx" then
+    Framework = exports['es_extended']:getSharedObject()
+end
+
 local currentGarage = 1
 
 local function doCarDamage(currentVehicle, veh)

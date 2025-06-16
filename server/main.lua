@@ -1,4 +1,11 @@
-local Framework = Config.GetFramework()
+local Framework = nil
+
+if Config.Framework == "qb" then
+    Framework = exports['qb-core']:GetCoreObject()
+elseif Config.Framework == "esx" then
+    Framework = exports['es_extended']:getSharedObject()
+end
+
 local incidents = {}
 local convictions = {}
 local bolos = {}
@@ -1350,7 +1357,6 @@ QBCore.Functions.CreateCallback('getWeaponInfo', function(source, cb)
 					break
 				end
 			end
-		end
 	else -- qb/lj
 		for _, item in pairs(Player.PlayerData.items) do
 			if item.type == "weapon" then

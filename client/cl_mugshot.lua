@@ -1,4 +1,11 @@
-local Framework = Config.GetFramework()
+local Framework = nil
+
+if Config.Framework == "qb" then
+    Framework = exports['qb-core']:GetCoreObject()
+elseif Config.Framework == "esx" then
+    Framework = exports['es_extended']:getSharedObject()
+end
+
 local PlayerData = {}
 local mugshotInProgress, createdCamera, MugshotArray, playerData = false, 0, {}, nil
 local handle, board, board_scaleform, overlay, ped, pedcoords, x, y, z, r, suspectheading, suspectx, suspecty, suspectz, board_pos
@@ -255,7 +262,7 @@ RegisterNUICallback("sendToJail", function(data, cb)
                 end
                 Citizen.Wait(5000)
                 -- Uses qb-policejob JailPlayer event
-                TriggerServerEvent("police:server:JailPlayer", targetSourceId, sentence)
+                TriggerServerEvent "police:server:JailPlayer", targetSourceId, sentence
             end
         end
     end)

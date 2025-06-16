@@ -1,5 +1,10 @@
-local QBCore = exports['qb-core']:GetCoreObject()
-local Framework = Config.GetFramework()
+local Framework = nil
+
+if Config.Framework == "qb" then
+    Framework = exports['qb-core']:GetCoreObject()
+elseif Config.Framework == "esx" then
+    Framework = exports['es_extended']:getSharedObject()
+end
 
 -- Get CitizenIDs from Player License
 function GetCitizenID(license)
